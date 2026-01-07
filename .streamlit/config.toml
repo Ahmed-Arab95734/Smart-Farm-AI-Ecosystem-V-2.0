@@ -1,0 +1,6 @@
+[theme]
+base = "dark"
+primaryColor = "#4CAF50" # Optional: This matches your app's green accent
+backgroundColor = "#0E1117" # Optional: Dark background
+secondaryBackgroundColor = "#262730" # Optional: Sidebar/Input background
+textColor = "#FAFAFA"
