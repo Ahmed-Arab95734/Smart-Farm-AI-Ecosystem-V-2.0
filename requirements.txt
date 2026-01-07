@@ -7,3 +7,4 @@ torch
 torchvision
 google-generativeai
 matplotlib
+scikit-learn
