@@ -2,20 +2,17 @@ import streamlit as st
 import numpy as np
 import joblib
 import paho.mqtt.client as mqtt
-import time
 import threading
 from PIL import Image
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.transforms as transforms
-import google.generativeai as genai
 import matplotlib.pyplot as plt
 
 # =========================
 # 🔧 CONFIGURATION
 # =========================
-GEMINI_API_KEY = "AIzaSyB_SZ4hmuj6GLyJyDbsB80AGjYtVVa8zu8" 
 MQTT_BROKER = "185.194.217.124" 
 MQTT_PORT = 1883
 
@@ -75,17 +72,6 @@ page_style = """
 </style>
 """
 st.markdown(page_style, unsafe_allow_html=True)
-
-# =========================
-# 🧠 GEMINI SETUP
-# =========================
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-    @st.cache_resource
-    def load_gemini_model():
-        return genai.GenerativeModel(model_name="gemini-2.0-flash-lite")
-    gemini_model = load_gemini_model()
-
 # =========================
 # 🧠 MODEL CLASSES
 # =========================
@@ -273,25 +259,7 @@ st.sidebar.write(f"**Connection:** {status}")
 if st.sidebar.button("🔄 Refresh Data"):
     st.rerun()
 
-# =========================
-# 🔄 SESSION STATE
-# =========================
-if 'disease_result' not in st.session_state: st.session_state['disease_result'] = None
-if 'chat_messages' not in st.session_state: st.session_state['chat_messages'] = []
-if "gemini_chat" not in st.session_state and GEMINI_API_KEY:
-    st.session_state.gemini_chat = gemini_model.start_chat(history=[])
 
-def rate_limit(seconds=2):
-    now = time.time()
-    last = st.session_state.get("last_gemini_call", 0)
-    if now - last < seconds:
-        st.warning("⏳ Please wait a moment...")
-        st.stop()
-    st.session_state["last_gemini_call"] = now
-
-@st.cache_data(ttl=300)
-def cached_first_analysis(prompt):
-    return gemini_model.generate_content(prompt).text
 
 # =========================
 # 📑 TABS

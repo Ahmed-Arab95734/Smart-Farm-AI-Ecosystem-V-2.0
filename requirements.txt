@@ -5,6 +5,5 @@ paho-mqtt
 Pillow
 torch
 torchvision
-google-generativeai
 matplotlib
 scikit-learn
