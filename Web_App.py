@@ -182,18 +182,32 @@ with col_header:
     st.subheader("Your company name is here")
 with col_logo:
     st.image(COMPANY_LOGO_URL, width=400)
-
 # =========================
 # 🔐 GLOBAL SIDEBAR & MQTT INIT
 # =========================
-# MOVED HERE: Inputs must be outside tabs to prevent resetting
 st.sidebar.header("🔐 Login Credentials")
-mqtt_user_input = st.sidebar.text_input("Username", value="", type="default")
-mqtt_pass_input = st.sidebar.text_input("Password", value="", type="password")
 
-if st.sidebar.button("Login"):
+# Define the callback function to clear data BEFORE the page reloads
+def logout_callback():
+    st.session_state["mqtt_user"] = ""
+    st.session_state["mqtt_pass"] = ""
     st.cache_resource.clear()
-    st.rerun()
+
+# 1. Widgets with keys
+mqtt_user_input = st.sidebar.text_input("Username", type="default", key="mqtt_user")
+mqtt_pass_input = st.sidebar.text_input("Password", type="password", key="mqtt_pass")
+
+col_login, col_logout = st.sidebar.columns(2)
+
+with col_login:
+    if st.button("Login", use_container_width=True):
+        st.cache_resource.clear()
+        st.rerun()
+
+with col_logout:
+    # 2. Assign the callback function to the button
+    # Note: We do NOT use 'if st.button():' here because the work is done in the callback
+    st.button("Logout", on_click=logout_callback, use_container_width=True)
 
 st.sidebar.markdown("---")
 st.sidebar.header("📡 IoT Status")
